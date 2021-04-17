@@ -1,109 +1,85 @@
--- 1回
 -- 全てのデータを取り出す
-SELECT * FROM `players` WHERE 1
+SELECT * FROM `table1` WHERE 1
 
 -- 一部のカラムだけ取得する
-SELECT name, level FROM players;
+SELECT name, lev FROM 'table1';
 
 -- 一部の行だけ取得する
-SELECT * FROM players WHERE level >= 7;
+SELECT * FROM 'table1' WHERE lev >= 7;
 
 -- 複数の条件を組み合わせる
-SELECT * FROM players WHERE level >= 7 AND job_id <> 6;
+SELECT * FROM 'table1' WHERE lev >= 7 AND table1_id <> 6;
 
-
--- 2回
 -- データ件数を表示する
-SELECT COUNT(*) FROM players;
-
+SELECT COUNT(*) FROM 'table1';
 
 --条件に合ったデータの件数を表示する
-SELECT COUNT(*) FROM players WHERE job_id = 6;
-
+SELECT COUNT(*) FROM 'table1' WHERE table1_id = 6;
 
 -- データを並び替えて取得する
-SELECT * FROM players ORDER BY level;
-
+SELECT * FROM 'table1' ORDER BY lev;
 
 -- データを並び替えて取得する 降順(DESC) 昇順(ASC)
-SELECT * FROM players ORDER BY level DESC;
-
+SELECT * FROM 'table1' ORDER BY lev DESC;
 
 --上位3件だけ表示す
-SELECT * FROM players ORDER BY level DESC LIMIT 3;
+SELECT * FROM 'table1' ORDER BY lev DESC LIMIT 3;
 
+-- 職業ごとに人数を集計する。 SELECTの後ろにtable1_idなしだとカウントだけ表示される。
+SELECT table1_id, COUNT(*) FROM 'table1' GROUP BY table1_id;
 
--- 職業ごとに人数を集計する。 SELECTの後ろにjob_idなしだとカウントだけ表示される。
-SELECT job_id, COUNT(*) FROM players GROUP BY job_id;
-
-
--- 3回
 -- データ(行)を追加する
-INSERT INTO players(id,name,level,job_id) VALUES(11, "霧島1号", 1, 1);
-
+INSERT INTO 'table1'(id,name,lev,table1_id) VALUES(11, "ssk_1", 1, 1);
 
 -- データを追加して表示する
-INSERT INTO players(id,name,level,job_id) VALUES(12, "霧島2号", 1, 1);
-SELECT * FROM players;
-
+INSERT INTO 'table1'(id,name,lev,table1_id) VALUES(12, "ssk_2", 1, 1);
+SELECT * FROM 'table1';
 
 -- 一度に複数のデータを追加する
-INSERT INTO players(id,name,level,job_id)
+INSERT INTO 'table1'(id,name,lev,table1_id)
 VALUES
-(13, "霧島3号", 1, 1),
-(14, "霧島4号", 1, 1)
+(13, "ssk_3", 1, 1),
+(14, "ssk_4", 1, 1)
 ;
-SELECT * FROM players;
-
+SELECT * FROM 'table1';
 
 -- データを更新する
-UPDATE players SET level = 10 WHERE id = 11;
-SELECT * FROM players;
-
+UPDATE 'table1' SET lev = 10 WHERE id = 11;
+SELECT * FROM 'table1';
 
 -- データを更新する。1増加
-UPDATE players SET level = level + 1 WHERE id = 12;
-SELECT * FROM players;
-
-
--- データを削除する
-DELETE FROM players WHERE id = 13;
-SELECT * FROM players;
-
+UPDATE 'table1' SET lev = lev + 1 WHERE id = 12;
+SELECT * FROM 'table1';
 
 -- データを削除する
-DELETE FROM players WHERE id >= 11;
-SELECT * FROM players;
+DELETE FROM 'table1' WHERE id = 13;
+SELECT * FROM 'table1';
 
--- 4
+-- データを削除する
+DELETE FROM 'table1' WHERE id >= 11;
+SELECT * FROM 'table1';
+
 -- テーブルを結合して表示する（内部結合）
-SELECT * FROM players INNER JOIN jobs ON jobs.id = players.job_id;
-
+SELECT * FROM 'table1' INNER JOIN table2 ON table2.id = 'table1'.table1_id;
 
 -- テーブルを結合して表示する(左結合)
-SELECT * FROM players LEFT JOIN jobs ON jobs.id = players.job_id;
-
+SELECT * FROM 'table1' LEFT JOIN table2 ON table2.id = 'table1'.table1_id;
 
 -- テーブルを結合して表示する(右結合)NULLは順に並べられないので、NULLじゃない方のテーブルで昇・降順にする。
-SELECT * FROM players RIGHT JOIN jobs ON jobs.id = players.job_id ORDER BY players.id ASC;
+SELECT * FROM 'table1' RIGHT JOIN table2 ON table2.id = 'table1'.table1_id ORDER BY 'table1'.id ASC;
 
--- 5
 -- 結合したテーブルを操作する
-SELECT * FROM players INNER JOIN jobs ON jobs.id = players.job_id;
-
+SELECT * FROM 'table1' INNER JOIN table2 ON table2.id = 'table1'.table1_id;
 
 -- 結合したテーブルで、指定カラムだけ表示
-SELECT name, level, vitality FROM players INNER JOIN jobs ON jobs.id = players.job_id;
-
+SELECT name, lev, vitality FROM 'table1' INNER JOIN table2 ON table2.id = 'table1'.table1_id;
 
 -- 結合したテーブルで、条件に合った行だけ表示
-SELECT name, level, strength FROM players INNER JOIN jobs ON jobs.id = players.job_id WHERE strength >= 5;
-
+SELECT name, lev, strength FROM 'table1' INNER JOIN table2 ON table2.id = 'table1'.table1_id WHERE strength >= 5;
 
 -- 職業ごとに人数を集計する
-SELECT job_id, job_name, COUNT(*) FROM players INNER JOIN jobs ON jobs.id = players.job_id GROUP BY job_id;
+SELECT table1_id, job_name, COUNT(*) FROM 'table1' INNER JOIN table2 ON table2.id = 'table1'.table1_id GROUP BY table1_id;
 
---6
 -- 日次のアクセス数を求める
 SELECT DATE(startTime), COUNT(logID)
 FROM eventlog
@@ -120,7 +96,6 @@ SELECT DATE_FORMAT(startTime, '%Y-%m'), COUNT(logID)
 FROM eventlog
 GROUP BY DATE_FORMAT(startTime, '%Y-%m');
 
---7
 SELECT userID AS "アクティブユーザー"
 FROM users;
 
@@ -131,7 +106,6 @@ SELECT userID AS "アクティブユーザー"
 FROM users
 WHERE deleted_at IS NULL;
 
---8
 -- アクティブユーザーを求める
 SELECT
     DATE(eventlog.startTime) AS 日付,
@@ -141,7 +115,6 @@ FROM eventlog
 WHERE deleted_at IS NULL
 GROUP BY DATE(eventlog.startTime);
 
---9
 -- いろいろな集計
 SELECT
 	eventlog.userID AS ユーザーID,
@@ -178,7 +151,6 @@ GROUP BY eventlog.userID
 HAVING SUM(events.increase_gold) >= 50
 ORDER BY eventlog.userID;
 
---10
 -- 日付に関する計算
 SELECT
 	userID AS ユーザーID,
@@ -189,7 +161,6 @@ FROM
 	eventlog
 GROUP BY userID;
 
---11
 -- 日付に関する計算
 SELECT
 	userID AS ユーザーID,
@@ -200,7 +171,6 @@ SELECT
 FROM
 	users;
 
---11
 -- テキスト検索
 SELECT
 	events.event_summary
@@ -229,7 +199,6 @@ FROM
 	INNER JOIN events ON events.eventID = eventlog.eventID
 WHERE  events.event_summary LIKE '%との闘い'
 
---12
 -- FROM句に書く場合
 SELECT *
 FROM (サブクエリ) AS (サブクエリ名);
@@ -260,7 +229,6 @@ FROM eventlog
 WHERE deleted_at IS NULL) AS ActiveUsers
 GROUP BY day;
 
---13
 -- 所持金で、お金持ちか分類する
 SELECT userID, gold,
     CASE
@@ -270,18 +238,13 @@ SELECT userID, gold,
         END AS finance
 FROM users;
 
---14
 --1. クロス集計の元になるデータを用意する
 --2. サブクエリとして読み込む
 --3. CASEで、特定の値だったら1にする。このとき別名を、特定の値と同じにする
 
-
 CASE WHEN クラス = "初級" THEN 1 ELSE NULL END AS "初級",
 CASE WHEN クラス = "中級" THEN 1 ELSE NULL END AS "中級",
 CASE WHEN クラス = "上級" THEN 1 ELSE NULL END AS "上級"
-
-
---4. SUM関数とGROUP BYで集計する
 
 -- クロス集計
 SELECT
@@ -293,8 +256,8 @@ FROM (SELECT DISTINCT
     DATE_FORMAT(startTime, '%Y-%m') AS 日付,
     eventlog.userID AS ユーザー,
     CASE
-        WHEN users.level >= 4 THEN '上級'
-        WHEN users.level >= 2 THEN '中級'
+        WHEN users.lev >= 4 THEN '上級'
+        WHEN users.lev >= 2 THEN '中級'
         ELSE '初級'
     END AS クラス
 FROM eventlog
@@ -311,8 +274,8 @@ FROM (SELECT DISTINCT
     DATE_FORMAT(startTime, '%Y-%m') AS 日付,
     eventlog.userID AS ユーザー,
     CASE
-        WHEN users.level >= 4 THEN '上級'
-        WHEN users.level >= 2 THEN '中級'
+        WHEN users.lev >= 4 THEN '上級'
+        WHEN users.lev >= 2 THEN '中級'
         ELSE '初級'
     END AS クラス
 FROM eventlog
@@ -320,16 +283,15 @@ FROM eventlog
 ) AS クラス分け
 GROUP BY 日付;
 
---15
 -- サブクエリで、平均レベル以上の割合を求める
-SELECT AVG(level) AS 平均レベル FROM users;
+SELECT AVG(lev) AS 平均レベル FROM users;
 
 SELECT
     COUNT(userID) AS 平均以上のユーザー数,
     (SELECT COUNT(*) FROM users) AS 全体のユーザー数,
     COUNT(userID) /(SELECT COUNT(*) FROM users) * 100 AS 割合
 FROM users
-WHERE level >= (SELECT AVG(level) FROM users);
+WHERE lev >= (SELECT AVG(lev) FROM users);
 
 -- ユーザーの平均年齢を求める
 SELECT
